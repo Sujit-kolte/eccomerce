@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { productAPI } from "../utils/api";
+import LoadingSpinner from "./LoadingSpinner";
+import { containerVariants, itemVariants } from "../utils/animations";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -167,67 +170,106 @@ const ProductList = () => {
         {/* Products Grid */}
         <div className="lg:col-span-3">
           {loading && (
-            <div className="text-center py-10">Loading products...</div>
+            <div className="flex justify-center items-center py-16">
+              <LoadingSpinner size="lg" />
+            </div>
           )}
           {error && (
-            <div className="text-red-500 text-center py-10">{error}</div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-red-500 text-center py-10 bg-red-50 border border-red-300 rounded-lg">
+              {error}
+            </motion.div>
           )}
 
           {products.length === 0 && !loading && (
-            <div className="text-center py-10 text-gray-600">
-              No products found
-            </div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-16 text-gray-600">
+              <div className="text-6xl mb-4">🔍</div>
+              <p className="text-lg">No products found</p>
+            </motion.div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible">
             {products.map((product) => (
-              <Link key={product._id} to={`/product/${product._id}`}>
-                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition cursor-pointer">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-4">
-                    <h3 className="font-semibold text-lg mb-1 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-2">
-                      {product.category}
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-green-600 font-bold text-lg">
-                        ${product.price.toFixed(2)}
-                      </span>
-                      <div className="flex items-center">
-                        <span className="text-yellow-400">★</span>
-                        <span className="text-sm ml-1">{product.rating}</span>
+              <motion.div
+                key={product._id}
+                variants={itemVariants}
+                whileHover={{ y: -8, boxShadow: "0 20px 25px rgba(0,0,0,0.1)" }}
+                whileTap={{ scale: 0.95 }}>
+                <Link to={`/product/${product._id}`} className="block h-full">
+                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition cursor-pointer h-full flex flex-col">
+                    <motion.div
+                      className="w-full h-48 overflow-hidden bg-gray-200"
+                      whileHover={{ scale: 1.05 }}>
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </motion.div>
+                    <div className="p-4 flex-1 flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-semibold text-lg mb-1 line-clamp-2 hover:text-blue-600 transition">
+                          {product.name}
+                        </h3>
+                        <p className="text-gray-600 text-sm mb-2">
+                          {product.category}
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-green-600 font-bold text-lg">
+                          ${product.price.toFixed(2)}
+                        </span>
+                        <div className="flex items-center">
+                          <motion.span
+                            animate={{ rotate: [0, 10, 0] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            className="text-yellow-400 text-lg">
+                            ★
+                          </motion.span>
+                          <span className="text-sm ml-1 font-medium">
+                            {product.rating || "N/A"}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Pagination */}
           {pagination.pages > 1 && (
-            <div className="flex justify-center gap-2 mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex justify-center gap-2 mt-8 flex-wrap">
               {Array.from({ length: pagination.pages }, (_, i) => i + 1).map(
                 (page) => (
-                  <button
+                  <motion.button
                     key={page}
                     onClick={() => handlePagination(page)}
-                    className={`px-4 py-2 rounded-lg ${
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`px-4 py-2 rounded-lg font-medium transition ${
                       pagination.currentPage === page
-                        ? "bg-blue-600 text-white"
+                        ? "bg-blue-600 text-white shadow-lg"
                         : "bg-gray-200 hover:bg-gray-300"
                     }`}>
                     {page}
-                  </button>
+                  </motion.button>
                 ),
               )}
-            </div>
+            </motion.div>
           )}
         </div>
       </div>

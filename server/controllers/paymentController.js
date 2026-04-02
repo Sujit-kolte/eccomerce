@@ -4,17 +4,36 @@ import Order from "../models/Order.js";
 
 let razorpay;
 
-// Initialize Razorpay with error handling
-try {
-  razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
-  });
-} catch (error) {
-  console.warn("⚠️  Razorpay initialization warning:", error.message);
-  console.warn(
-    "⚠️  Payment features may not work without Razorpay credentials",
-  );
+// Lazy initialize Razorpay (only when first needed)
+function initializeRazorpay() {
+  if (razorpay) {
+    return razorpay; // Already initialized
+  }
+
+  try {
+    console.log("🔧 Razorpay Lazy Initialization:");
+    console.log(
+      "  KEY_ID:",
+      process.env.RAZORPAY_KEY_ID ? "✓ Set" : "✗ Missing",
+    );
+    console.log(
+      "  KEY_SECRET:",
+      process.env.RAZORPAY_KEY_SECRET ? "✓ Set" : "✗ Missing",
+    );
+
+    razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+    console.log("✅ Razorpay initialized successfully!");
+    return razorpay;
+  } catch (error) {
+    console.error("❌ Razorpay initialization error:", error.message);
+    console.warn(
+      "⚠️  Payment features may not work without Razorpay credentials",
+    );
+    return null;
+  }
 }
 
 export const createPaymentIntent = async (req, res) => {
@@ -25,8 +44,17 @@ export const createPaymentIntent = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
+    // Initialize Razorpay on demand
+    const razorpayInstance = initializeRazorpay();
+    if (!razorpayInstance) {
+      return res.status(500).json({
+        message:
+          "Razorpay is not initialized. Please check your API keys in .env file",
+      });
+    }
+
     // Create Razorpay order
-    const razorpayOrder = await razorpay.orders.create({
+    const razorpayOrder = await razorpayInstance.orders.create({
       amount: Math.round(amount * 100), // Convert to paise (1 rupee = 100 paise)
       currency: "INR",
       receipt: orderId,

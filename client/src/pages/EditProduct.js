@@ -103,15 +103,14 @@ const EditProduct = () => {
     setError(null);
     setSuccess(false);
 
-    // Validation
+    // Validation - only name, price, category, and countInStock are required
     if (
       !formData.name ||
       !formData.price ||
-      !formData.image ||
       !formData.category ||
-      !formData.countInStock
+      formData.countInStock === ""
     ) {
-      setError("Please fill in all required fields");
+      setError("Please fill in required fields: Name, Price, Category, Stock");
       return;
     }
 
@@ -122,7 +121,9 @@ const EditProduct = () => {
         name: formData.name,
         description: formData.description,
         price: parseFloat(formData.price),
-        image: formData.image,
+        image:
+          formData.image ||
+          "https://via.placeholder.com/300?text=Product+Image",
         category: formData.category,
         tags: formData.tags
           .split(",")
@@ -137,7 +138,7 @@ const EditProduct = () => {
 
       // Redirect after 2 seconds
       setTimeout(() => {
-        navigate(`/products/${id}`);
+        navigate("/admin/dashboard");
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to update product");
@@ -178,7 +179,7 @@ const EditProduct = () => {
           {/* Product Name */}
           <div>
             <label className="block text-gray-700 font-semibold mb-2">
-              Product Name *
+              Product Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -208,7 +209,7 @@ const EditProduct = () => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-gray-700 font-semibold mb-2">
-                Price (in ₹) *
+                Price (in ₹) <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -224,7 +225,7 @@ const EditProduct = () => {
 
             <div>
               <label className="block text-gray-700 font-semibold mb-2">
-                Stock Count *
+                Stock Count <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -241,7 +242,7 @@ const EditProduct = () => {
           {/* Image Upload */}
           <div>
             <label className="block text-gray-700 font-semibold mb-2">
-              Product Image
+              Product Image (Optional)
             </label>
             <input
               type="file"
@@ -272,7 +273,7 @@ const EditProduct = () => {
           {/* Category */}
           <div>
             <label className="block text-gray-700 font-semibold mb-2">
-              Category *
+              Category <span className="text-red-500">*</span>
             </label>
             <select
               name="category"

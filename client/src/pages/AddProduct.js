@@ -10,31 +10,15 @@ const AddProduct = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const [categories, setCategories] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     image: "",
-    category: "",
     tags: "",
     countInStock: "",
   });
-
-  // Fetch categories on mount
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await productAPI.getCategories();
-        setCategories(response.data.categories);
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   // Check if user is admin
   useEffect(() => {
@@ -85,14 +69,9 @@ const AddProduct = () => {
     setError(null);
     setSuccess(false);
 
-    // Validation - only name, price, category, and countInStock are required
-    if (
-      !formData.name ||
-      !formData.price ||
-      !formData.category ||
-      formData.countInStock === ""
-    ) {
-      setError("Please fill in required fields: Name, Price, Category, Stock");
+    // Validation - only name, price, and countInStock are required
+    if (!formData.name || !formData.price || formData.countInStock === "") {
+      setError("Please fill in required fields: Name, Price, Stock");
       return;
     }
 
@@ -106,7 +85,6 @@ const AddProduct = () => {
         image:
           formData.image ||
           "https://via.placeholder.com/300?text=Product+Image",
-        category: formData.category,
         tags: formData.tags
           .split(",")
           .map((tag) => tag.trim())
@@ -122,7 +100,6 @@ const AddProduct = () => {
         description: "",
         price: "",
         image: "",
-        category: "",
         tags: "",
         countInStock: "",
       });
@@ -255,26 +232,6 @@ const AddProduct = () => {
                 />
               </div>
             )}
-          </div>
-
-          {/* Category */}
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Category <span className="text-red-500">*</span>
-            </label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required>
-              <option value="">Select a category</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
           </div>
 
           {/* Tags */}

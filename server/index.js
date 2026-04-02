@@ -1,5 +1,23 @@
 import dotenv from "dotenv";
-dotenv.config(); // Load .env BEFORE other imports
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env from server directory FIRST
+const envPath = path.join(__dirname, ".env");
+console.log("📁 Loading .env from:", envPath);
+dotenv.config({ path: envPath });
+console.log("✅ Environment variables loaded");
+console.log(
+  "  RAZORPAY_KEY_ID:",
+  process.env.RAZORPAY_KEY_ID ? "✓ Set" : "✗ Missing",
+);
+console.log(
+  "  RAZORPAY_KEY_SECRET:",
+  process.env.RAZORPAY_KEY_SECRET ? "✓ Set" : "✗ Missing",
+);
 
 import express from "express";
 import cors from "cors";
@@ -16,12 +34,12 @@ app.use((req, res, next) => {
   if (req.path === "/api/payments/webhook") {
     express.raw({ type: "application/json" })(req, res, next);
   } else {
-    express.json()(req, res, next);
+    express.json({ limit: "50mb" })(req, res, next);
   }
 });
 
 // Middleware
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(
   cors({
     origin:

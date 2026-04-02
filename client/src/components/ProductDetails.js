@@ -176,13 +176,14 @@ const ProductDetails = () => {
             {recommendations.map((rec) => (
               <div
                 key={rec._id}
-                className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition">
+                onClick={() => navigate(`/products/${rec._id}`)}
+                className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg hover:border-blue-400 transition cursor-pointer">
                 <img
                   src={rec.image}
                   alt={rec.name}
-                  className="w-full h-40 object-cover rounded mb-2"
+                  className="w-full h-40 object-cover rounded mb-2 hover:opacity-80 transition"
                 />
-                <h3 className="font-semibold text-sm mb-2 line-clamp-2">
+                <h3 className="font-semibold text-sm mb-2 line-clamp-2 hover:text-blue-600 transition">
                   {rec.name}
                 </h3>
                 <p className="text-green-600 font-bold">

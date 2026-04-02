@@ -206,7 +206,7 @@ export const createProduct = async (req, res) => {
       req.body;
 
     // Validation
-    if (!name || !price || !image || !category) {
+    if (!name || !price || !image) {
       return res.status(400).json({ message: "Required fields missing" });
     }
 

@@ -98,9 +98,10 @@ const Checkout = () => {
               orderId,
             });
 
-            // Clear cart and redirect
+            // Clear cart and redirect to home
             dispatch(clearCart());
-            navigate(`/order-confirmation/${orderId}`);
+            alert("Payment successful! Thank you for your purchase.");
+            navigate("/");
           } catch (err) {
             setError(
               err.response?.data?.message || "Payment verification failed",
