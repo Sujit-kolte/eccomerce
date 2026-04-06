@@ -57,7 +57,10 @@ const Checkout = () => {
       setLoading(true);
       setError(null);
 
-      // Step 1: Create order
+      // Step 1: Calculate final amount with tax
+      const finalAmount = totalPrice * 1.1; // Add 10% tax
+
+      // Step 2: Create order with tax-inclusive total
       const orderResponse = await paymentAPI.createOrder({
         orderItems: items.map((item) => ({
           product: item._id,
@@ -65,14 +68,14 @@ const Checkout = () => {
           price: item.price,
         })),
         shippingAddress,
-        totalPrice,
+        totalPrice: finalAmount,
       });
 
       const orderId = orderResponse.data.order._id;
 
-      // Step 2: Create Razorpay order
+      // Step 3: Create Razorpay order
       const paymentResponse = await paymentAPI.createPaymentIntent({
-        amount: totalPrice,
+        amount: finalAmount,
         orderId,
         email: user.email,
       });
@@ -83,14 +86,14 @@ const Checkout = () => {
       // Step 3: Open Razorpay checkout
       const options = {
         key: razorpayKeyId,
-        amount: Math.round(totalPrice * 100),
+        amount: Math.round(finalAmount * 100),
         currency: "INR",
         name: "E-Commerce Store",
         description: "Purchase Order",
         order_id: razorpayOrderId,
         handler: async function (response) {
           try {
-            // Step 4: Verify payment on backend
+            // Step 6: Verify payment on backend
             await paymentAPI.confirmPayment({
               razorpayPaymentId: response.razorpay_payment_id,
               razorpayOrderId: response.razorpay_order_id,

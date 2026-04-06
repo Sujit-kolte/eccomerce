@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/cartSlice";
 import { productAPI } from "../utils/api";
+import Rating from "./Rating";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -15,6 +16,7 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshRatings, setRefreshRatings] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -33,7 +35,7 @@ const ProductDetails = () => {
     };
 
     fetchProduct();
-  }, [id]);
+  }, [id, refreshRatings]);
 
   const handleAddToCart = () => {
     if (product) {
@@ -194,6 +196,12 @@ const ProductDetails = () => {
           </div>
         </div>
       )}
+
+      {/* Ratings Section */}
+      <Rating
+        productId={id}
+        onRatingSubmitted={() => setRefreshRatings(!refreshRatings)}
+      />
     </div>
   );
 };

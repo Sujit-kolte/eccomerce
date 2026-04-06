@@ -57,4 +57,12 @@ export const paymentAPI = {
     apiClient.put(`/payments/orders/${orderId}/deliver`),
 };
 
+// Review API calls
+export const reviewAPI = {
+  addReview: (data) => apiClient.post("/reviews", data),
+  getProductReviews: (productId) => apiClient.get(`/reviews/${productId}`),
+  getUserProductReview: (productId) =>
+    apiClient.get(`/reviews/user/${productId}`),
+};
+
 export default apiClient;
