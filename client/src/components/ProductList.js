@@ -7,7 +7,6 @@ import { containerVariants, itemVariants } from "../utils/animations";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -27,21 +26,9 @@ const ProductList = () => {
   });
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
     fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await productAPI.getCategories();
-      setCategories(response.data.categories);
-    } catch (err) {
-      console.error("Failed to load categories:", err);
-    }
-  };
 
   const fetchProducts = async () => {
     try {

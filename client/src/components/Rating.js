@@ -19,6 +19,7 @@ const Rating = ({ productId, onRatingSubmitted }) => {
     if (user) {
       fetchUserReview();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId, user]);
 
   const fetchReviews = async () => {

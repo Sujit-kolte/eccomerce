@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { loginSuccess, loginFailure, loginStart } from "../redux/authSlice";
 import { authAPI } from "../utils/api";
 import { showSuccessToast, showErrorToast } from "../utils/toastNotifications";
-import LoadingSpinner from "../components/LoadingSpinner";
 import { pageVariants, pageTransition } from "../utils/animations";
 
 const Login = () => {
