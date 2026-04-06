@@ -41,12 +41,17 @@ app.use((req, res, next) => {
 
 // Middleware
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+// CORS Configuration
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://eccomerce-4fsp.vercel.app",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? "https://eccomerce-4fsp.vercel.app"
-        : "http://localhost:3000",
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
