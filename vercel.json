@@ -1,8 +1,4 @@
 {
   "buildCommand": "npm install && cd client && npm install && npm run build",
-  "outputDirectory": "client/build",
-  "env": {
-    "REACT_APP_API_URL": "@react-app-api-url",
-    "REACT_APP_RAZORPAY_KEY_ID": "@react-app-razorpay-key-id"
-  }
+  "outputDirectory": "client/build"
 }
