@@ -47,26 +47,43 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // CORS Configuration
-const allowedOrigins = [
+let allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5000",
   "http://127.0.0.1:3000",
+  "https://eccomerce-4fsp.vercel.app", // Your Vercel frontend
+  "https://eccomerce.vercel.app",
 ];
 
 // Add Vercel deployments dynamically
 if (process.env.VERCEL_URL) {
-  allowedOrigins.push(`https://${process.env.VERCEL_URL}`);
+  const vercelUrl = `https://${process.env.VERCEL_URL}`;
+  if (!allowedOrigins.includes(vercelUrl)) {
+    allowedOrigins.push(vercelUrl);
+  }
+}
+
+// In production, allow any origin for now (can restrict later)
+if (process.env.NODE_ENV === "production") {
+  console.log("🚀 Production mode - Allowed origins:", allowedOrigins);
 }
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        console.warn(`CORS blocked origin: ${origin}`);
-        callback(new Error("Not allowed by CORS"));
+      // Allow requests with no origin (mobile apps, curl)
+      if (!origin) {
+        return callback(null, true);
       }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // Log for debugging
+      console.warn(`⚠️ CORS blocked - Origin: ${origin}`);
+      console.warn(`📋 Allowed origins: ${allowedOrigins.join(", ")}`);
+      callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
