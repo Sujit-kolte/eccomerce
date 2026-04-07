@@ -1,4 +1,22 @@
 {
-  "buildCommand": "npm install && cd client && npm install && npm run build",
-  "outputDirectory": "client/build"
+  "buildCommand": "npm install && cd client && npm install && npm run build && cd ..",
+  "outputDirectory": "client/build",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "env": {
+    "MONGODB_URI": "@mongodb_uri",
+    "JWT_SECRET": "@jwt_secret",
+    "RAZORPAY_KEY_ID": "@razorpay_key_id",
+    "RAZORPAY_KEY_SECRET": "@razorpay_key_secret",
+    "RAZORPAY_WEBHOOK_SECRET": "@razorpay_webhook_secret",
+    "NODE_ENV": "production"
+  }
 }
